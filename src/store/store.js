@@ -1,14 +1,23 @@
+import { toast } from 'sonner'
 import { create } from 'zustand'
+
 import { apiManagement } from '../Utils/api'
 
 const initialState = {
-  listDbManager: [],
+  error: null,
   isLoading: true,
-  error: null
+  listDbManager: [],
+  isEntryVisible: false,
+  actualDbManager: null
 }
 
 export const useStore = create((set) => ({
   ...initialState,
+
+  setActualDbManager: (dbManager) => set({ actualDbManager: dbManager, isEntryVisible: true }),
+  removeActualDbManager: () => set({ actualDbManager: null }),
+
+  toggleEntryVisibility: () => set((state) => ({ isEntryVisible: !state.isEntryVisible })),
 
   getData: async () => {
     set({ isLoading: true, error: null })
@@ -16,7 +25,7 @@ export const useStore = create((set) => ({
     const data = await apiManagement.getData()
 
     if (data.error) {
-      set({ error: data.error })
+      set({ error: data.error, isLoading: false })
     } else {
       set({ listDbManager: data, isLoading: false })
     }
@@ -34,6 +43,7 @@ export const useStore = create((set) => ({
         listDbManager: state.listDbManager.filter((dbManager) => dbManager.id !== id),
         isLoading: false
       }))
+      toast.success('Database Manager deleted successfully')
     }
   },
 
@@ -49,6 +59,7 @@ export const useStore = create((set) => ({
         listDbManager: [...state.listDbManager, response],
         isLoading: false
       }))
+      toast.success('Database Manager added successfully')
     }
   },
 
@@ -66,8 +77,7 @@ export const useStore = create((set) => ({
         ),
         isLoading: false
       }))
+      toast.success('Database Manager updated successfully')
     }
-  },
-
-  reset: () => set({ ...initialState })
+  }
 }))

@@ -1,4 +1,4 @@
-const API_URL = 'https://localhost:7100/api/Manager/'
+const API_URL = 'https://localhost:7100/api/Manager'
 
 const handleApiCall = async (method, url, data = {}) => {
   try {
@@ -7,6 +7,7 @@ const handleApiCall = async (method, url, data = {}) => {
       headers: {
         'Content-Type': 'application/json'
       },
+
       ...((method === 'POST' || method === 'PUT') && { body: JSON.stringify(data) })
     })
 
